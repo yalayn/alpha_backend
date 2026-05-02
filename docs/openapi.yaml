@@ -1,0 +1,112 @@
+openapi: 3.0.0
+info:
+  title: Project Alpha API
+  description: API contract for Project Alpha following Clean Architecture.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local server
+
+# ==================== Endpoints de Administración ====================
+# Agregar endpoints para las nuevas funcionalidades
+# Definir los endpoints para las nuevas funcionalidades
+paths:
+
+  # ==================== Endpoints Generales ====================
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+
+  # ==================== Endpoints de Administración ====================
+  /plans:
+    post:
+      summary: "Crear un nuevo plan de suscripción (Agnóstico)"
+      operationId: createPlan
+      tags: ["Admin"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plan'
+      responses:
+        '201':
+          description: Plan creado
+
+  # ==================== Endpoints de Suscripciones ====================
+  /subscriptions:
+    post:
+      summary: "Suscribir un cliente a un plan"
+      operationId: subscribeCustomer
+      tags: ["Subscriptions"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionRequest'
+      responses:
+        '201':
+          description: Suscripción activa
+
+  # ==================== Endpoints de Monitoreo de Suscripciones ====================
+  /access/validate:
+    post:
+      summary: "Validar si un cliente tiene acceso a una funcionalidad específica"
+      operationId: validateAccess
+      tags: ["Orchestration"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId: { type: string }
+                featureId: { type: string } # Ej: "video-hd", "export-pdf"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessResult'
+
+# ==================== Definiciones de Esquemas ====================
+components:
+  schemas:
+    User: # Existente, pero ahora actúa como 'Customer'
+      type: object
+      properties:
+        id: { type: string }
+        email: { type: string }
+        name: { type: string }
+
+    Plan:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        price: { type: number }
+        currency: { type: string }
+        interval: { type: string, enum: [month, year] }
+        features:
+          type: array
+          items:
+            type: string
+          description: "Lista de IDs de funcionalidades permitidas en este plan"
+
+    SubscriptionRequest:
+      type: object
+      properties:
+        customerId: { type: string }
+        planId: { type: string }
+        paymentMethodId: { type: string }
+
+    AccessResult:
+      type: object
+      properties:
+        hasAccess: { type: boolean }
+        reason: { type: string } # Ej: "Subscription expired" o "Feature not in plan"
