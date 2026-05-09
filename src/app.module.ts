@@ -9,7 +9,7 @@ import { USER_REPOSITORY } from './domain/ports/UserRepository';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb://localhost:27017/alpha_db'),
+    MongooseModule.forRoot(process.env.MONGO_URI || 'mongodb://localhost:27017/alpha_db'),
     PlanModule,
     SubscriptionModule,
   ],
