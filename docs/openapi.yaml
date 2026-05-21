@@ -482,6 +482,45 @@ components:
 
   # ── Reusable Responses ───────────────────────────────────────
   responses:
+    BadRequest:
+      description: Datos de entrada inválidos
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            error: validation_error
+            message: Invalid input data
+            timestamp: "2025-01-01T00:00:00.000Z"
+            path: /some-path
+
+    Unauthorized:
+      description: No autorizado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 401
+            error: unauthorized
+            message: Missing or invalid credentials
+            timestamp: "2025-01-01T00:00:00.000Z"
+            path: /some-path
+
+    Conflict:
+      description: Conflicto con el estado actual del recurso
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 409
+            error: conflict
+            message: Resource already exists
+            timestamp: "2025-01-01T00:00:00.000Z"
+            path: /some-path
+
     InternalServerError:
       description: Error interno del servidor
       content:
