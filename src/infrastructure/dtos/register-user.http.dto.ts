@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEmail, IsString, MinLength, IsEnum, IsOptional } from 'class-validator';
+import { UserRole } from '@domain/entities/user.entity';
 
 export class RegisterUserHttpDto {
   @ApiProperty({ description: 'Correo electrónico del usuario', example: 'john.doe@example.com' })
@@ -14,4 +15,9 @@ export class RegisterUserHttpDto {
   @ApiProperty({ description: 'Nombre completo del usuario', example: 'John Doe' })
   @IsString()
   name: string;
+
+  @ApiPropertyOptional({ description: 'Rol del usuario', enum: ['admin', 'customer'], default: 'customer', example: 'customer' })
+  @IsOptional()
+  @IsEnum(['admin', 'customer'], { message: 'El rol debe ser admin o customer' })
+  role?: UserRole;
 }
