@@ -2,6 +2,7 @@ import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RegisterUserUseCase } from '@application/use-cases/register-user/register-user.use-case';
 import { LoginUseCase } from '@application/use-cases/login/login.use-case';
+import { RegisterUserDto } from '@application/dtos/register-user.dto';
 import { RegisterUserHttpDto } from '../dtos/register-user.http.dto';
 import { LoginHttpDto } from '../dtos/login.http.dto';
 import { UserPresenter } from '../presenters/user.presenter';
@@ -21,7 +22,8 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Datos de registro inválidos.' })
   @ApiResponse({ status: 409, description: 'El email ya está en uso.' })
   async register(@Body() body: RegisterUserHttpDto) {
-    const user = await this.registerUserUseCase.execute(body);
+    const dto = new RegisterUserDto(body.email, body.password, body.name, body.role);
+    const user = await this.registerUserUseCase.execute(dto);
     return UserPresenter.toResponse(user);
   }
 
