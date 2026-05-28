@@ -29,7 +29,7 @@ export class RegisterUserUseCase {
       dto.email,
       dto.name,
       hashedPassword,
-      'customer', // Por defecto registramos clientes
+      dto.role ?? 'customer',
     );
 
     // 4. Persistir
