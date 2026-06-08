@@ -1,6 +1,6 @@
 # Project Alpha — Backend
 
-Backend del SaaS B2B Freemium **Project Alpha**.  
+Backend del proyecto SaaS B2B  **Project Alpha**.  
 Construido con **NestJS** siguiendo **Arquitectura Hexagonal** (Ports & Adapters): la lógica de negocio está completamente desacoplada de frameworks, bases de datos y APIs externas.
 
 ---
@@ -46,10 +46,7 @@ npm install
 npm run sync-api
 
 # 4. Levantar MongoDB con Docker
-docker-compose up -d
-
-# 5. Iniciar el servidor en modo desarrollo
-npm run start:dev
+docker compose up -d
 ```
 
 El servidor quedará disponible en `http://localhost:3000`.
