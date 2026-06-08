@@ -27,3 +27,6 @@ lerna-debug.log*
 .agents/
 .gemini/
 .cursor/
+
+# Contrato API — artefacto sincronizado, no se versiona aquí
+docs/openapi.yaml
