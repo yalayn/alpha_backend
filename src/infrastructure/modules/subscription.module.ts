@@ -4,14 +4,15 @@ import { SubscriptionDocument, SubscriptionSchema } from '../persistence/mongoos
 import { MongooseSubscriptionRepository } from '../persistence/mongoose/repositories/mongoose-subscription.repository';
 import { SUBSCRIPTION_REPOSITORY } from '@domain/ports/subscription.repository.port';
 import { SubscribeCustomerUseCase } from '@application/use-cases/subscribe-customer/subscribe-customer.use-case';
-import { ValidateAccessUseCase } from '@application/use-cases/validate-access/validate-access.use-case';
+import { GetSubscriptionByIdUseCase } from '@application/use-cases/get-subscription-by-id/get-subscription-by-id.use-case';
+import { ChangePlanUseCase } from '@application/use-cases/change-plan/change-plan.use-case';
 import { PlanModule } from './plan.module';
 import { SubscriptionController } from '../controllers/subscription.controller';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: SubscriptionDocument.name, schema: SubscriptionSchema }]),
-    PlanModule, // Necesitamos el PlanModule para acceder al PLAN_REPOSITORY
+    PlanModule,
   ],
   controllers: [SubscriptionController],
   providers: [
@@ -20,7 +21,9 @@ import { SubscriptionController } from '../controllers/subscription.controller';
       useClass: MongooseSubscriptionRepository,
     },
     SubscribeCustomerUseCase,
-    ValidateAccessUseCase,
+    GetSubscriptionByIdUseCase,
+    ChangePlanUseCase,
   ],
+  exports: [SUBSCRIPTION_REPOSITORY],
 })
 export class SubscriptionModule {}

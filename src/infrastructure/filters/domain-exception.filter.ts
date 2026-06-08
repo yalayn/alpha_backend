@@ -14,6 +14,8 @@ import { PaymentFailedException } from '@domain/exceptions/payment-failed.except
 import { FeatureNotIncludedException } from '@domain/exceptions/feature-not-included.exception';
 import { UserAlreadyExistsException } from '@domain/exceptions/user-already-exists.exception';
 import { InvalidCredentialsException } from '@domain/exceptions/invalid-credentials.exception';
+import { SubscriptionNotActiveException } from '@domain/exceptions/subscription-not-active.exception';
+import { SamePlanChangeException } from '@domain/exceptions/same-plan-change.exception';
 
 @Catch()
 export class DomainExceptionFilter implements ExceptionFilter {
@@ -62,6 +64,14 @@ export class DomainExceptionFilter implements ExceptionFilter {
     else if (exception instanceof InvalidCredentialsException) {
       status = HttpStatus.UNAUTHORIZED;
       code = 'invalid_credentials';
+    }
+    else if (exception instanceof SubscriptionNotActiveException) {
+      status = HttpStatus.CONFLICT;
+      code = 'subscription_not_active';
+    }
+    else if (exception instanceof SamePlanChangeException) {
+      status = HttpStatus.CONFLICT;
+      code = 'same_plan_change';
     }
 
     response.status(status).json({
