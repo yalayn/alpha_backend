@@ -1,88 +1,125 @@
-# Project Alpha 🚀
+# Project Alpha — Backend
 
-Project Alpha is a robust backend application built with **NestJS**, designed following the principles of **Clean Architecture** (Hexagonal Architecture / Ports & Adapters). This ensures the business logic is decoupled from technical details like databases, frameworks, or external APIs.
+Backend del SaaS B2B Freemium **Project Alpha**.  
+Construido con **NestJS** siguiendo **Arquitectura Hexagonal** (Ports & Adapters): la lógica de negocio está completamente desacoplada de frameworks, bases de datos y APIs externas.
 
-## 🏛️ Architecture
+---
 
-The project is structured into three main layers to protect the **Domain** (the core of the application):
+## Stack
 
-1.  **Domain Layer** (`src/domain`): Contains entities, ports (interfaces), and business logic. It has **zero** dependencies on external frameworks or libraries.
-2.  **Application Layer** (`src/application`): Contains use cases that orchestrate the domain logic to perform specific tasks.
-3.  **Infrastructure Layer** (`src/infrastructure`): Contains technical implementations like controllers, database repositories, and external adapters.
+| Tecnología | Rol |
+|---|---|
+| NestJS + TypeScript strict | Framework y lenguaje base |
+| MongoDB + Mongoose | Base de datos |
+| Docker + Docker Compose | Contenedorización |
+| OpenAPI 3.0 | Contrato de APIs (definido en `alpha_spec`) |
 
-> [!IMPORTANT]
-> For a detailed explanation of the rules and layer boundaries, please refer to the **[ARCHITECTURE.md](ARCHITECTURE.md)** file.
+---
 
-## 🛠️ Tech Stack
+## Prerequisitos
 
-- **Framework:** [NestJS](https://nestjs.com/)
-- **Language:** [TypeScript](https://www.typescriptlang.org/)
-- **Database:** MongoDB (via Mongoose)
-- **Containerization:** [Docker](https://www.docker.com/) & Docker Compose
-- **API Specification:** [OpenAPI 3.0](docs/openapi.yaml)
+- **Node.js** v18 o superior
+- **Docker** y Docker Compose (para levantar MongoDB)
+- Los tres repositorios del ecosistema deben ser hermanos bajo el mismo directorio padre:
 
-## 📁 Project Structure
-
-```bash
-├── .cursorrules             # AI behavior instructions for this repo
-├── ARCHITECTURE.md          # Architectural "Constitution"
-├── docker-compose.yml       # Container orchestration (Mongo, App)
-├── docs/
-│   └── openapi.yaml         # API Contract (Source of Truth)
-├── src/
-│   ├── main.ts              # NestJS entry point
-│   ├── app.module.ts        # Root module
-│   ├── domain/              # Layer 1: The Core (0 dependencies)
-│   ├── application/         # Layer 2: Use Cases (Depends on Domain)
-│   └── infrastructure/      # Layer 3: Technical Details (Depends on all)
-├── test/                    # Integration and E2E tests
-└── package.json
+```
+/[directorio-raíz]/
+├── alpha_spec/      ← repo alpha_spec (fuente de verdad del contrato)
+├── alpha_backend/   ← este repo
+└── alpha_frontend/  ← repo alpha_frontend
 ```
 
-## 🚀 Getting Started
+> Esta estructura es obligatoria para que `sync-api` pueda copiar el `openapi.yaml` de forma local sin necesidad de red ni tokens.
 
-### Prerequisites
+---
 
-- Node.js (v18+)
-- Docker & Docker Compose
-
-### Installation
+## Instalación y arranque
 
 ```bash
-# Install dependencies
+# 1. Copiar variables de entorno y completar valores
+cp .env.example .env
+
+# 2. Instalar dependencias
 npm install
-```
 
-### Running Locally
+# 3. Sincronizar el contrato OpenAPI desde alpha_spec/
+npm run sync-api
 
-```bash
-# Development mode
+# 4. Levantar MongoDB con Docker
+docker-compose up -d
+
+# 5. Iniciar el servidor en modo desarrollo
 npm run start:dev
 ```
 
-### Running with Docker
+El servidor quedará disponible en `http://localhost:3000`.
 
-```bash
-# Start the application and MongoDB
-docker-compose up --build
-```
-
-## 📖 API Documentation
-
-The API contract is defined using OpenAPI. You can find the specification in:
-`docs/openapi.yaml`
-
-It includes endpoints for:
-- **General**: Health checks.
-- **Admin**: Plan management.
-- **Subscriptions**: Customer subscription management.
-- **Orchestration**: Access validation.
-
-## ⚖️ Critical Rules
-
-- **Domain Isolation**: No imports from `@nestjs/common` or any other library inside `src/domain`.
-- **Port usage**: Use cases in `src/application` must access data only through **Ports** (interfaces).
-- **Test-Driven**: Every new Use Case **must** be accompanied by a `.spec.ts` unit test.
+> **`sync-api`** copia `../alpha_spec/docs/openapi.yaml` a `docs/openapi.yaml` localmente.  
+> `docs/openapi.yaml` está en `.gitignore` — es un artefacto local, no se versiona en este repo.
 
 ---
-Developed with ❤️ following Clean Architecture principles.
+
+## Variables de entorno
+
+| Variable | Descripción | Ejemplo |
+|---|---|---|
+| `PORT` | Puerto del servidor | `3000` |
+| `MONGO_URI` | Cadena de conexión a MongoDB | `mongodb://localhost:27017/project-alpha` |
+| `JWT_SECRET` | Secreto para firmar JWT | `cambia_este_valor` |
+
+---
+
+## Comandos disponibles
+
+| Comando | Descripción |
+|---|---|
+| `npm run sync-api` | Copia el `openapi.yaml` desde `alpha_spec/` al repo local |
+| `npm run start:dev` | Inicia el servidor en modo desarrollo (watch) |
+| `npm run start:prod` | Inicia el servidor en modo producción |
+| `npm run build` | Compila el proyecto |
+| `npm run test` | Ejecuta tests unitarios |
+| `npm run test:watch` | Tests en modo watch |
+| `npm run test:cov` | Reporte de cobertura |
+
+---
+
+## Arquitectura
+
+El proyecto se organiza en tres capas:
+
+```
+src/
+├── domain/          ← Capa 1: entidades, puertos e interfaces (0 dependencias externas)
+├── application/     ← Capa 2: casos de uso (depende solo del dominio)
+└── infrastructure/  ← Capa 3: controladores, repositorios, adaptadores
+```
+
+Para el detalle completo de convenciones, reglas y patrones de generación:  
+→ [`ARCHITECTURE.md`](./ARCHITECTURE.md)
+
+---
+
+## Contrato de APIs
+
+El `openapi.yaml` se define en el repositorio `alpha_spec` y es la **fuente de verdad absoluta** del contrato. Ningún endpoint se implementa sin estar primero definido en ese contrato.
+
+Antes de implementar o modificar endpoints, ejecutar:
+
+```bash
+npm run sync-api
+```
+
+---
+
+## Convención de ramas
+
+| Rama | Contenido |
+|---|---|
+| `main` | Solo features `✅ Implementado` |
+| `feat/SPE-XXX` | Trabajo activo de una feature — misma rama en los tres repos |
+
+---
+
+## Flujo de trabajo
+
+Este repo forma parte de un ecosistema de tres repositorios coordinados por el [`MASTER_PLAN`](../alpha_spec/MASTER_PLAN.md). El protocolo de implementación de cada feature está definido ahí.
