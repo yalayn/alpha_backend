@@ -23,6 +23,9 @@ export class SubscriptionDocument extends Document {
 
   @Prop({ required: false })
   endDate?: Date;
+
+  @Prop({ required: false })
+  scheduledPlanId?: string;
 }
 
 export const SubscriptionSchema = SchemaFactory.createForClass(SubscriptionDocument);

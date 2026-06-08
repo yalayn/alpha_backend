@@ -9,6 +9,7 @@ export class Subscription {
     public readonly status: SubscriptionStatus,
     public readonly startDate: Date,
     public readonly endDate?: Date,
+    public readonly scheduledPlanId?: string,
   ) {}
 
   isExpired(): boolean {

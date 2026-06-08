@@ -11,6 +11,7 @@ export class SubscriptionMapper {
       doc.status as SubscriptionStatus,
       doc.startDate,
       doc.endDate,
+      doc.scheduledPlanId,
     );
   }
 
@@ -23,6 +24,7 @@ export class SubscriptionMapper {
       status: entity.status,
       startDate: entity.startDate,
       endDate: entity.endDate,
+      scheduledPlanId: entity.scheduledPlanId,
     };
   }
 }
