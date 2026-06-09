@@ -41,6 +41,14 @@ export class MongooseSubscriptionRepository implements ISubscriptionRepository {
     return doc ? SubscriptionMapper.toDomain(doc) : null;
   }
 
+  async findActiveByPlanId(planId: string): Promise<Subscription[]> {
+    const docs = await this.subscriptionModel.find({
+      planId,
+      status: 'active',
+    }).exec();
+    return docs.map(SubscriptionMapper.toDomain);
+  }
+
   async findAll(): Promise<Subscription[]> {
     const docs = await this.subscriptionModel.find().exec();
     return docs.map(SubscriptionMapper.toDomain);

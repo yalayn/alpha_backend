@@ -5,6 +5,7 @@ export interface ISubscriptionRepository {
   findById(id: string): Promise<Subscription | null>;
   findByCustomerId(customerId: string): Promise<Subscription | null>;
   findActiveByCustomerId(customerId: string): Promise<Subscription | null>;
+  findActiveByPlanId(planId: string): Promise<Subscription[]>;
   findAll(): Promise<Subscription[]>;
 }
 

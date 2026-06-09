@@ -37,4 +37,9 @@ export class MongoosePlanRepository implements IPlanRepository {
     const docs = await this.planModel.find().exec();
     return docs.map(PlanMapper.toDomain);
   }
+
+  async deleteById(id: string): Promise<Plan> {
+    const doc = await this.planModel.findOneAndDelete({ id }).exec();
+    return PlanMapper.toDomain(doc!);
+  }
 }
