@@ -22,7 +22,7 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Datos de registro inválidos.' })
   @ApiResponse({ status: 409, description: 'El email ya está en uso.' })
   async register(@Body() body: RegisterUserHttpDto) {
-    const dto = new RegisterUserDto(body.email, body.password, body.name, body.role);
+    const dto: RegisterUserDto = { email: body.email, password: body.password, name: body.name, role: body.role };
     const user = await this.registerUserUseCase.execute(dto);
     return UserPresenter.toResponse(user);
   }
