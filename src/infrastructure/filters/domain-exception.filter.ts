@@ -16,6 +16,8 @@ import { UserAlreadyExistsException } from '@domain/exceptions/user-already-exis
 import { InvalidCredentialsException } from '@domain/exceptions/invalid-credentials.exception';
 import { SubscriptionNotActiveException } from '@domain/exceptions/subscription-not-active.exception';
 import { SamePlanChangeException } from '@domain/exceptions/same-plan-change.exception';
+import { PlanHasActiveSubscriptionsException } from '@domain/exceptions/plan-has-active-subscriptions.exception';
+import { PlanIntervalLockedException } from '@domain/exceptions/plan-interval-locked.exception';
 
 @Catch()
 export class DomainExceptionFilter implements ExceptionFilter {
@@ -72,6 +74,14 @@ export class DomainExceptionFilter implements ExceptionFilter {
     else if (exception instanceof SamePlanChangeException) {
       status = HttpStatus.CONFLICT;
       code = 'same_plan_change';
+    }
+    else if (exception instanceof PlanHasActiveSubscriptionsException) {
+      status = HttpStatus.CONFLICT;
+      code = 'plan_has_active_subscriptions';
+    }
+    else if (exception instanceof PlanIntervalLockedException) {
+      status = HttpStatus.CONFLICT;
+      code = 'plan_interval_locked';
     }
 
     response.status(status).json({

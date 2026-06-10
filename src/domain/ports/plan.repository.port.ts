@@ -5,6 +5,7 @@ export interface IPlanRepository {
   findById(id: string): Promise<Plan | null>;
   findByName(name: string): Promise<Plan | null>;
   findAll(): Promise<Plan[]>;
+  deleteById(id: string): Promise<Plan>;
 }
 
 export const PLAN_REPOSITORY = Symbol('IPlanRepository');

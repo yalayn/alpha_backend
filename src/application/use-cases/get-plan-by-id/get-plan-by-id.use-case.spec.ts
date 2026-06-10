@@ -15,6 +15,7 @@ describe('GetPlanByIdUseCase', () => {
       findById: jest.fn(),
       findAll: jest.fn(),
       findByName: jest.fn(),
+      deleteById: jest.fn(),
     };
     useCase = new GetPlanByIdUseCase(mockPlanRepository);
   });
