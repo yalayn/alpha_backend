@@ -29,15 +29,12 @@ export class MongooseSubscriptionRepository implements ISubscriptionRepository {
   }
 
   async findByCustomerId(customerId: string): Promise<Subscription | null> {
-    const doc = await this.subscriptionModel.findOne({ customerId }).exec();
+    const doc = await this.subscriptionModel.findOne({ customerId }).sort({ startDate: -1 }).exec();
     return doc ? SubscriptionMapper.toDomain(doc) : null;
   }
 
   async findActiveByCustomerId(customerId: string): Promise<Subscription | null> {
-    const doc = await this.subscriptionModel.findOne({ 
-      customerId, 
-      status: 'active' 
-    }).exec();
+    const doc = await this.subscriptionModel.findOne({ customerId, status: 'active' }).exec();
     return doc ? SubscriptionMapper.toDomain(doc) : null;
   }
 
