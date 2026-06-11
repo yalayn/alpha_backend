@@ -16,29 +16,24 @@ export class SubscribeCustomerUseCase {
   ) {}
 
   async execute(dto: SubscribeCustomerDto): Promise<Subscription> {
-    // 1. Validar que el plan existe
     const plan = await this.planRepository.findById(dto.planId);
     if (!plan) {
       throw new PlanNotFoundException(dto.planId);
     }
 
-    // 2. Validar que el cliente no tenga ya una suscripción activa
-    const activeSubscription = await this.subscriptionRepository.findActiveByCustomerId(dto.customerId);
-    if (activeSubscription) {
+    const recentSubscription = await this.subscriptionRepository.findByCustomerId(dto.customerId);
+    if (recentSubscription?.status === 'active') {
       throw new SubscriptionAlreadyActiveException(dto.customerId);
     }
 
-    // 3. Calcular fechas
     const startDate = new Date();
     const endDate = new Date(startDate);
-    
     if (plan.interval === 'year') {
       endDate.setFullYear(endDate.getFullYear() + 1);
     } else {
       endDate.setMonth(endDate.getMonth() + 1);
     }
 
-    // 4. Crear entidad
     const subscription = new Subscription(
       crypto.randomUUID(),
       dto.customerId,
@@ -49,7 +44,6 @@ export class SubscribeCustomerUseCase {
       endDate,
     );
 
-    // 5. Persistir
     return this.subscriptionRepository.save(subscription);
   }
 }

@@ -50,7 +50,7 @@ describe('SubscribeCustomerUseCase', () => {
   describe('execute', () => {
     it('should create an active subscription when plan exists and customer has no active subscription', async () => {
       mockPlanRepository.findById.mockResolvedValue(mockPlan);
-      mockSubscriptionRepository.findActiveByCustomerId.mockResolvedValue(null);
+      mockSubscriptionRepository.findByCustomerId.mockResolvedValue(null);
       mockSubscriptionRepository.save.mockResolvedValue(mockSubscription);
 
       const result = await useCase.execute(validDto);
@@ -62,7 +62,7 @@ describe('SubscribeCustomerUseCase', () => {
 
     it('should calculate endDate correctly for a monthly plan', async () => {
       mockPlanRepository.findById.mockResolvedValue(mockPlan);
-      mockSubscriptionRepository.findActiveByCustomerId.mockResolvedValue(null);
+      mockSubscriptionRepository.findByCustomerId.mockResolvedValue(null);
       mockSubscriptionRepository.save.mockImplementation(async (sub) => sub);
 
       const result = await useCase.execute(validDto);
@@ -84,7 +84,7 @@ describe('SubscribeCustomerUseCase', () => {
 
     it('should throw SubscriptionAlreadyActiveException when customer already has an active subscription', async () => {
       mockPlanRepository.findById.mockResolvedValue(mockPlan);
-      mockSubscriptionRepository.findActiveByCustomerId.mockResolvedValue(mockSubscription);
+      mockSubscriptionRepository.findByCustomerId.mockResolvedValue(mockSubscription);
 
       await expect(useCase.execute(validDto)).rejects.toThrow(SubscriptionAlreadyActiveException);
       expect(mockSubscriptionRepository.save).not.toHaveBeenCalled();
