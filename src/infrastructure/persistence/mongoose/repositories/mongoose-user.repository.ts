@@ -22,6 +22,13 @@ export class MongooseUserRepository implements UserRepository {
     ).exec();
   }
 
+  async update(user: User): Promise<void> {
+    // Actualiza por _id (sin upsert). El _id es inmutable, así que se excluye
+    // del $set — necesario para poder cambiar el email (SPE-008).
+    const { _id, ...fields } = UserMapper.toPersistence(user);
+    await this.userModel.findByIdAndUpdate(user.id, { $set: fields }).exec();
+  }
+
   async findById(id: string): Promise<User | null> {
     const document = await this.userModel.findById(id).exec();
     if (!document) return null;

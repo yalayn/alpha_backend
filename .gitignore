@@ -4,6 +4,9 @@
 /build
 /tmp
 
+# Artefacto incremental de TypeScript — se regenera en cada build
+*.tsbuildinfo
+
 # Logs
 logs
 *.log

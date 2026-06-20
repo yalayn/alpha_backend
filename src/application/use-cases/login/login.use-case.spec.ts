@@ -24,6 +24,7 @@ describe('LoginUseCase', () => {
   beforeEach(() => {
     mockUserRepository = {
       save: jest.fn(),
+      update: jest.fn(),
       findById: jest.fn(),
       findByEmail: jest.fn(),
     };

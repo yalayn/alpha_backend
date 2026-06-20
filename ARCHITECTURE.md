@@ -156,6 +156,23 @@ export const {ENTITY}_REPOSITORY = Symbol('I{Entity}Repository');
 - Exportar siempre un `Symbol` de inyección junto a la interfaz
 - Los métodos retornan entidades de dominio, nunca documentos de Mongoose
 
+**Puertos de salida para efectos (no persistencia):** además de los repositorios,
+el dominio puede declarar puertos para **efectos externos** (envío de email, notificaciones,
+pagos…). Siguen las mismas reglas (interfaz + `Symbol`), pero su adaptador no vive en
+`persistence/` sino en `infrastructure/adapters/{concern}/`. Primer ejemplo (SPE-008):
+
+```typescript
+// email-sender.port.ts
+export interface EmailSender {
+  send(message: EmailMessage): Promise<void>;
+}
+export const EMAIL_SENDER = Symbol('EmailSender');
+```
+
+El caso de uso depende del puerto `EmailSender`; el adaptador concreto
+`NodemailerEmailSender` (`infrastructure/adapters/email/`) implementa el envío real vía SMTP
+(config por env). En tests se inyecta un fake del puerto, nunca el adaptador real.
+
 ### 4.3 Excepciones de Dominio
 
 ```typescript
