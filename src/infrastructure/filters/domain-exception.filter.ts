@@ -19,6 +19,11 @@ import { SubscriptionNotActiveException } from '@domain/exceptions/subscription-
 import { SamePlanChangeException } from '@domain/exceptions/same-plan-change.exception';
 import { PlanHasActiveSubscriptionsException } from '@domain/exceptions/plan-has-active-subscriptions.exception';
 import { PlanIntervalLockedException } from '@domain/exceptions/plan-interval-locked.exception';
+import { EmailAlreadyInUseException } from '@domain/exceptions/email-already-in-use.exception';
+import { EmailUnchangedException } from '@domain/exceptions/email-unchanged.exception';
+import { EmailChangeNotFoundException } from '@domain/exceptions/email-change-not-found.exception';
+import { InvalidTokenException } from '@domain/exceptions/invalid-token.exception';
+import { TokenExpiredException } from '@domain/exceptions/token-expired.exception';
 
 @Catch()
 export class DomainExceptionFilter implements ExceptionFilter {
@@ -87,6 +92,26 @@ export class DomainExceptionFilter implements ExceptionFilter {
     else if (exception instanceof PlanIntervalLockedException) {
       status = HttpStatus.CONFLICT;
       code = 'plan_interval_locked';
+    }
+    else if (exception instanceof EmailChangeNotFoundException) {
+      status = HttpStatus.NOT_FOUND;
+      code = 'email_change_not_found';
+    }
+    else if (exception instanceof EmailAlreadyInUseException) {
+      status = HttpStatus.CONFLICT;
+      code = 'email_already_in_use';
+    }
+    else if (exception instanceof EmailUnchangedException) {
+      status = HttpStatus.UNPROCESSABLE_ENTITY;
+      code = 'email_unchanged';
+    }
+    else if (exception instanceof InvalidTokenException) {
+      status = HttpStatus.BAD_REQUEST;
+      code = 'invalid_token';
+    }
+    else if (exception instanceof TokenExpiredException) {
+      status = HttpStatus.GONE;
+      code = 'token_expired';
     }
 
     response.status(status).json({
