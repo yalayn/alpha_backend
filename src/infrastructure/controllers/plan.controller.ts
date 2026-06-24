@@ -9,10 +9,12 @@ import { CreatePlanHttpDto } from '../dtos/create-plan.http.dto';
 import { UpdatePlanHttpDto } from '../dtos/update-plan.http.dto';
 import { PlanPresenter } from '../presenters/plan.presenter';
 import { JwtAuthGuard } from '../adapters/auth/jwt-auth.guard';
+import { RolesGuard } from '../adapters/auth/roles.guard';
+import { Roles } from '../adapters/auth/roles.decorator';
 
 @ApiTags('Plans')
 @Controller('plans')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class PlanController {
   constructor(
     private readonly createPlanUseCase: CreatePlanUseCase,
@@ -23,9 +25,11 @@ export class PlanController {
   ) { }
 
   @Post()
+  @Roles('admin')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Crear un nuevo plan de suscripción' })
   @ApiResponse({ status: 201, description: 'Plan creado exitosamente.' })
+  @ApiResponse({ status: 403, description: 'Rol insuficiente (requiere admin).' })
   @ApiResponse({ status: 409, description: 'El nombre del plan ya existe.' })
   async create(@Body() body: CreatePlanHttpDto) {
     const result = await this.createPlanUseCase.execute(body);
@@ -53,8 +57,10 @@ export class PlanController {
   }
 
   @Patch(':planId')
+  @Roles('admin')
   @ApiOperation({ summary: 'Editar un plan existente (actualización parcial)' })
   @ApiResponse({ status: 200, description: 'Plan actualizado' })
+  @ApiResponse({ status: 403, description: 'Rol insuficiente (requiere admin).' })
   @ApiResponse({ status: 404, description: 'Plan no encontrado' })
   @ApiResponse({ status: 409, description: 'Nombre duplicado o intervalo bloqueado' })
   async updatePlan(@Param('planId') planId: string, @Body() body: UpdatePlanHttpDto) {
@@ -63,8 +69,10 @@ export class PlanController {
   }
 
   @Delete(':planId')
+  @Roles('admin')
   @ApiOperation({ summary: 'Eliminar un plan sin suscripciones activas' })
   @ApiResponse({ status: 200, description: 'Plan eliminado' })
+  @ApiResponse({ status: 403, description: 'Rol insuficiente (requiere admin).' })
   @ApiResponse({ status: 404, description: 'Plan no encontrado' })
   @ApiResponse({ status: 409, description: 'El plan tiene suscripciones activas' })
   async deletePlan(@Param('planId') planId: string) {
